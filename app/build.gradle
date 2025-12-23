@@ -23,18 +23,18 @@ android {
         }
     }
 
-    // --- هذا هو الجزء الجديد للإصلاح ---
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        // هذا السطر يخبره: لو وجدت خطأ بسيطاً، أكمل البناء ولا تتوقف
-        abortOnError false
+    // --- هذا هو التغيير الجوهري (الصيغة الحديثة) ---
+    lint {
+        // إيقاف توقف البناء عند وجود أخطاء
+        abortOnError = false
+        // عدم فحص الأخطاء بصرامة
+        checkReleaseBuilds = false
     }
-    // ------------------------------------
 }
 
 dependencies {
