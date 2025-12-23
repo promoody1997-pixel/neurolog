@@ -22,10 +22,8 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # تم حذف خطوة chmod لأنها كانت تسبب المشكلة
-
+    # تم استخدام أمر gradle المباشر بدلاً من gradlew لتفادي الخطأ
     - name: Build with Gradle
-      # لاحظ أننا نستخدم gradle بدلاً من ./gradlew
       run: gradle assembleDebug
 
     - name: Upload APK
