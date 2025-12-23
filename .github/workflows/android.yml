@@ -3,8 +3,6 @@ name: Android Build
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
   workflow_dispatch:
 
 jobs:
@@ -22,7 +20,10 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # تم استخدام أمر gradle المباشر بدلاً من gradlew لتفادي الخطأ
+    # هذا هو الكشاف: سيطبع لنا أماكن الملفات في السجل
+    - name: List Files (Debug)
+      run: ls -R
+
     - name: Build with Gradle
       run: gradle assembleDebug
 
