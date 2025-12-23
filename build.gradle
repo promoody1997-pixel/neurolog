@@ -1,4 +1,16 @@
 // Top-level build file
-plugins {
-    id 'com.android.application' version '8.2.0' apply false
+buildscript {
+    repositories {
+        google()  // هذا هو السطر المفقود الذي سيحل المشكلة
+        mavenCentral()
+    }
+    dependencies {
+        // تحديد إصدار أدوات البناء هنا يدوياً
+        classpath 'com.android.tools.build:gradle:8.2.0'
+    }
+}
+
+// تنظيف ملفات البناء القديمة
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
