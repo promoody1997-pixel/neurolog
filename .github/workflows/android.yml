@@ -20,9 +20,17 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    # هذا هو الكشاف 🔦
+    # سيطبع لنا كل الملفات وأماكنها الحقيقية
+    - name: Detective Mode (List Files)
+      run: |
+        echo "=== Root Directory Content ==="
+        ls -la
+        echo "=== App Directory Content ==="
+        ls -R
+
     - name: Build with Gradle
-      # التغيير هنا: أضفنا :app: قبل الأمر
-      # هذا يخبره: ادخل مجلد app ثم نفذ الأمر
+      # عدنا للأمر البسيط مؤقتاً لنرى هل سيعمل بعد اكتشاف الملفات
       run: gradle :app:assembleDebug
 
     - name: Upload APK
