@@ -20,12 +20,10 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # هذا هو الكشاف: سيطبع لنا أماكن الملفات في السجل
-    - name: List Files (Debug)
-      run: ls -R
-
     - name: Build with Gradle
-      run: gradle assembleDebug
+      # التغيير هنا: أضفنا :app: قبل الأمر
+      # هذا يخبره: ادخل مجلد app ثم نفذ الأمر
+      run: gradle :app:assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
