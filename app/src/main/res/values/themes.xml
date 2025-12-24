@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NeuroLog" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#2563EB</item>
+        <item name="colorPrimaryDark">#1E40AF</item>
+        <item name="colorAccent">#03DAC5</item>
+    </style>
+</resources>
