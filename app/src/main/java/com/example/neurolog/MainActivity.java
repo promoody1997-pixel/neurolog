@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // تهيئة قاعدة البيانات
         dbHelper = new DbHelper(this);
         
         logsTextView = findViewById(R.id.logsTextView);
@@ -36,13 +35,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadLogs() {
-        // استخدام الدالة الجديدة من DbHelper
         Cursor cursor = dbHelper.getAllLogs();
         StringBuilder builder = new StringBuilder();
         
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                // قراءة البيانات باستخدام الأعمدة الصحيحة
                 String timestamp = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TIMESTAMP));
                 int reactionTime = cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_REACTION_TIME));
                 int mood = cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_MOOD));

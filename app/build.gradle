@@ -28,12 +28,9 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    // --- هذا هو التغيير الجوهري (الصيغة الحديثة) ---
     lint {
-        // إيقاف توقف البناء عند وجود أخطاء
-        abortOnError = false
-        // عدم فحص الأخطاء بصرامة
-        checkReleaseBuilds = false
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 

@@ -111,7 +111,6 @@ public class GameActivity extends AppCompatActivity {
         int mood = moodSeekBar.getProgress();
         int energy = energySeekBar.getProgress();
         
-        // هنا يتم استدعاء الدالة الجديدة التي أضفناها في DbHelper
         dbHelper.insertLog(reactionTimeResult, mood, energy);
         
         Toast.makeText(this, "تم الحفظ!", Toast.LENGTH_SHORT).show();
