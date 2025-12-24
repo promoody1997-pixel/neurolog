@@ -13,17 +13,16 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    private TextView stroopTextView;
+    private TextView colorText, moodLabel, energyLabel;
+    private Button btnOption1, btnOption2, btnSave;
     private LinearLayout gameLayout, inputLayout;
     private SeekBar moodSeekBar, energySeekBar;
-    private DbHelper dbHelper;
-
-    private String[] colors = {"RED", "GREEN", "BLUE", "YELLOW", "BLACK"};
-    private int[] colorValues = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.BLACK};
     
-    private int targetColorIndex;
     private long startTime;
-    private int reactionTime;
+    private int reactionTimeResult;
+    private int correctColor;
+    
+    private DbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,69 +30,91 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         dbHelper = new DbHelper(this);
-        stroopTextView = findViewById(R.id.stroopTextView);
+
+        colorText = findViewById(R.id.colorText);
+        btnOption1 = findViewById(R.id.btnOption1);
+        btnOption2 = findViewById(R.id.btnOption2);
         gameLayout = findViewById(R.id.gameLayout);
         inputLayout = findViewById(R.id.inputLayout);
+        
         moodSeekBar = findViewById(R.id.moodSeekBar);
         energySeekBar = findViewById(R.id.energySeekBar);
-        Button saveButton = findViewById(R.id.saveButton);
+        moodLabel = findViewById(R.id.moodLabel);
+        energyLabel = findViewById(R.id.energyLabel);
+        btnSave = findViewById(R.id.btnSave);
 
-        setupGameButtons();
-        startStroopTest();
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        moodSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                int mood = moodSeekBar.getProgress();
-                int energy = energySeekBar.getProgress();
-                dbHelper.insertLog(reactionTime, mood, energy);
-                Toast.makeText(GameActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-                finish();
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                moodLabel.setText("المزاج: " + progress + "/10");
             }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+
+        energySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                energyLabel.setText("الطاقة: " + progress + "/10");
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        btnSave.setOnClickListener(v -> saveResults());
+
+        startGame();
     }
 
-    private void setupGameButtons() {
-        LinearLayout buttonContainer = findViewById(R.id.buttonContainer);
-        for (int i = 0; i < colors.length; i++) {
-            Button btn = new Button(this);
-            btn.setText(colors[i]);
-            final int index = i;
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkAnswer(index);
-                }
-            });
-            buttonContainer.addView(btn);
-        }
-    }
+    private void startGame() {
+        gameLayout.setVisibility(View.VISIBLE);
+        inputLayout.setVisibility(View.GONE);
 
-    private void startStroopTest() {
         Random random = new Random();
-        int textIndex = random.nextInt(colors.length);
-        targetColorIndex = random.nextInt(colors.length);
-
-        stroopTextView.setText(colors[textIndex]);
-        stroopTextView.setTextColor(colorValues[targetColorIndex]);
+        int colorIndex = random.nextInt(2); 
         
+        if (colorIndex == 0) {
+            colorText.setText("أزرق"); 
+            colorText.setTextColor(Color.RED); 
+            correctColor = Color.RED;
+        } else {
+            colorText.setText("أحمر");
+            colorText.setTextColor(Color.BLUE);
+            correctColor = Color.BLUE;
+        }
+
+        btnOption1.setBackgroundColor(Color.RED);
+        btnOption1.setText("أحمر");
+        btnOption1.setOnClickListener(v -> checkAnswer(Color.RED));
+
+        btnOption2.setBackgroundColor(Color.BLUE);
+        btnOption2.setText("أزرق");
+        btnOption2.setOnClickListener(v -> checkAnswer(Color.BLUE));
+
         startTime = System.currentTimeMillis();
     }
 
-    private void checkAnswer(int selectedIndex) {
-        if (selectedIndex == targetColorIndex) {
-            reactionTime = (int) (System.currentTimeMillis() - startTime);
-            showInputLayout();
+    private void checkAnswer(int selectedColor) {
+        if (selectedColor == correctColor) {
+            reactionTimeResult = (int) (System.currentTimeMillis() - startTime);
+            Toast.makeText(this, "رائع! " + reactionTimeResult + "ms", Toast.LENGTH_SHORT).show();
+            
+            gameLayout.setVisibility(View.GONE);
+            inputLayout.setVisibility(View.VISIBLE);
         } else {
-            Toast.makeText(this, "Wrong! Try again.", Toast.LENGTH_SHORT).show();
-            startStroopTest();
+            Toast.makeText(this, "خطأ! حاول مرة أخرى", Toast.LENGTH_SHORT).show();
+            startGame(); 
         }
     }
 
-    private void showInputLayout() {
-        gameLayout.setVisibility(View.GONE);
-        inputLayout.setVisibility(View.VISIBLE);
-        TextView resultText = findViewById(R.id.resultText);
-        resultText.setText("Reaction Time: " + reactionTime + "ms");
+    private void saveResults() {
+        int mood = moodSeekBar.getProgress();
+        int energy = energySeekBar.getProgress();
+        
+        // هنا يتم استدعاء الدالة الجديدة التي أضفناها في DbHelper
+        dbHelper.insertLog(reactionTimeResult, mood, energy);
+        
+        Toast.makeText(this, "تم الحفظ!", Toast.LENGTH_SHORT).show();
+        finish(); 
     }
 }
