@@ -1,26 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+name: Android Build
 
-    <application
-        android:allowBackup="true"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.NeuroLog"
-        android:supportsRtl="true">
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
-        <activity
-            android:name="com.example.neurolog.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-        <activity
-            android:name="com.example.neurolog.GameActivity"
-            android:exported="false"
-            android:label="اختبار ستروب" />
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-    </application>
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
 
-</manifest>
+    - name: Build with Gradle
+      run: gradle :app:assembleDebug -x lint --warning-mode=none
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: NeuroLog-App
+        path: app/build/outputs/apk/debug/app-debug.apk
